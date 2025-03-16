@@ -7,6 +7,10 @@ Vivacity Digital is focused on building **high-quality Flutter applications** fo
 
 ---
 
+## Working with Vivacity Digital
+https://app.clickup.com/9016833492/v/l/7-9016833492-1
+---
+
 ## 📂 Repository Structure
 
 ```
