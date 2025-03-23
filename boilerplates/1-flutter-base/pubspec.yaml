@@ -1,0 +1,28 @@
+name: basic_flutter_app
+description: A simple Flutter boilerplate project.
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  provider: ^6.1.1 
+  cupertino_icons: ^1.0.6  # Icons for iOS-style apps
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  shimmer: ^2.0.0
+  lint: ^2.0.0  # Adds recommended linting rules
+  golden_toolkit: ^0.15.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - lib/assets/mock-data/products.json
+    - lib/assets/mock-data/categories.json

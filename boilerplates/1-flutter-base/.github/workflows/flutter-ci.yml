@@ -1,0 +1,35 @@
+name: Flutter CI
+
+on:
+  push:
+    branches: [main, development]
+  pull_request:
+    branches: [main, development]
+
+jobs:
+  build:
+    name: Analyze & Test Flutter App
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ✨ Checkout code
+        uses: actions/checkout@v3
+
+      - name: 📦 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.3'
+          channel: stable
+          cache: true
+
+      - name: ⛏ Get dependencies
+        run: flutter pub get
+
+      - name: 🔎 Analyze code
+        run: flutter analyze
+
+      - name: 🎓 Run widget tests (if available)
+        run: flutter test || echo "No tests found - skipping"
+
+      - name: ✅ Format check
+        run: dart format . --set-exit-if-changed

@@ -1,0 +1,17 @@
+[
+    {
+      "id": "1",
+      "title": "Wireless Headphones",
+      "description": "High-quality over-ear headphones with noise cancellation.",
+      "price": 199.99,
+      "imageUrl": "https://example.com/headphones.jpg"
+    },
+    {
+      "id": "2",
+      "title": "Smartwatch",
+      "description": "Track fitness, health, and notifications on the go.",
+      "price": 149.99,
+      "imageUrl": "https://example.com/smartwatch.jpg"
+    }
+  ]
+  
