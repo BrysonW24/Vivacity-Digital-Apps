@@ -1,0 +1,21 @@
+name: basic_flutter_app
+description: A simple Flutter boilerplate project.
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.6  # Icons for iOS-style apps
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  lint: ^2.0.0  # Adds recommended linting rules
+
+flutter:
+  uses-material-design: true
