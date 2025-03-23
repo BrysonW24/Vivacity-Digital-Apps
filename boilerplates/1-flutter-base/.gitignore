@@ -1,0 +1,9 @@
+# Flutter-related ignores
+.dart_tool/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+build/
+
+# FVM Version Cache
+.fvm/
