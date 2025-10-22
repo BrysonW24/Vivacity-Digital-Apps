@@ -1,0 +1,58 @@
+name: Dart CI/CD
+permissions:
+  contents: read
+
+on:
+  push:
+    branches:
+      - main
+      - development
+      - test
+  pull_request:
+    branches:
+      - main
+      - development
+      - test
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Dart
+        uses: dart-lang/setup-dart@v1  # Always use latest stable version
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+
+      - name: Install dependencies
+        run: dart pub get
+
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Analyze project source
+        run: dart analyze --fatal-infos
+
+      - name: Run tests
+        run: dart test
+
+  deploy:
+    needs: build  # Only deploy if build & tests pass
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'  # Deploy only when merged into main
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy App (Firebase/AWS/GCP)
+        run: echo "Deploying app..."
