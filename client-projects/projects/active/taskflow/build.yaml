@@ -1,0 +1,45 @@
+# This file configures the dart code generator and other build configurations.
+
+# Build targets configuration
+targets:
+  $default:
+    builders:
+      # JSON serialization code generation (json_serializable)
+      json_serializable:
+        generate_for:
+          - lib/models/**
+        options:
+          # Use const constructors where possible
+          create_to_json: true
+          create_factory: true
+          field_rename: snake
+          nullable: true
+          explicit_to_json: true
+          checked: true
+      
+      # Freezed immutable models
+      freezed:
+        generate_for:
+          - lib/models/**
+        options:
+          # Options for code generation
+          
+      # JSON annotation processing
+      json_serializable|build_runner:
+        options:
+          create_to_json: true
+
+  # Build runner configuration
+  build_runner:
+    options:
+      # Runs build before serving
+      generate_for:
+        - lib/**
+
+# Global options
+global_options:
+  # Disable specific builders if needed
+  exclude:
+    - test/**
+    - pubspec.yaml
+    - README.md

@@ -1,0 +1,53 @@
+# Xcode
+#
+# gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
+
+## Xcode 8 and earlier
+*.xcscmblueprint
+*.xccheckout
+*.moved-aside
+DerivedData/
+*.moved-aside
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+
+## Xcode 8, 9, 10
+xcuserdata/
+*.xcworkspace/xcuserdata/
+
+## Xcode 9, 10, 11
+*.xcworkspace/
+
+## Generated CocoaPods files
+Pods/
+Podfile.lock
+
+## Xcode
+*.pbxproj
+*.xcworkspace
+*.xcscmblueprint
+*.xccheckout
+
+## Mac
+.DS_Store
+
+## Files created by Flutter
+flutter_export_environment.sh
+GeneratedPluginRegistrant.m
+GeneratedPluginRegistrant.h
+GeneratedPluginRegistrant.swift
+
+## Cert & provisioning files
+*.p8
+*.p12
+*.cer
+*.mobileprovision
+*.mobileprovision~
+*.ipa
+*.dSYM
