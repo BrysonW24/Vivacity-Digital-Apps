@@ -1,0 +1,132 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: vivacity-postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME:-vivacity_platform}
+      POSTGRES_USER: ${DB_USER:-vivacity_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-change_me_in_production}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8"
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infrastructure/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - vivacity-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-vivacity_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: vivacity-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - vivacity-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: vivacity-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infrastructure/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./infrastructure/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./infrastructure/certs:/etc/nginx/certs:ro
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - vivacity-network
+    restart: unless-stopped
+
+  # Firebase Emulator (optional, for development)
+  firebase-emulator:
+    image: odijf/firebase-emulator:latest
+    container_name: vivacity-firebase-emulator
+    ports:
+      - "4000:4000"
+      - "5000:5000"
+      - "5001:5001"
+      - "9099:9099"
+      - "9199:9199"
+    environment:
+      - FIREBASE_DATABASE_EMULATOR_HOST=0.0.0.0:9000
+      - FIRESTORE_EMULATOR_HOST=0.0.0.0:8080
+    networks:
+      - vivacity-network
+    profiles:
+      - dev
+    restart: unless-stopped
+
+  # Adminer (Database UI for development)
+  adminer:
+    image: adminer:latest
+    container_name: vivacity-adminer
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - vivacity-network
+    profiles:
+      - dev
+    restart: unless-stopped
+
+  # Redis Commander (Redis UI for development)
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: vivacity-redis-commander
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis
+    networks:
+      - vivacity-network
+    profiles:
+      - dev
+    restart: unless-stopped
+
+  # Mailhog (Email testing in development)
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: vivacity-mailhog
+    ports:
+      - "1025:1025"    # SMTP
+      - "8025:8025"    # Web UI
+    networks:
+      - vivacity-network
+    profiles:
+      - dev
+    restart: unless-stopped
+
+networks:
+  vivacity-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local

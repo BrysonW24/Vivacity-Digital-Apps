@@ -1,0 +1,64 @@
+MIT License
+
+Copyright (c) 2025 Vivacity Digital
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+## Additional Terms for Template Usage
+
+This license applies to the template code and configurations. When you use these
+templates in your projects:
+
+1. **Attribution**: While not required, attribution to Vivacity Digital is appreciated
+2. **Modifications**: You may modify templates freely for your projects
+3. **Distribution**: You may distribute modified or unmodified templates
+4. **Commercial Use**: Commercial use is permitted
+5. **Private Use**: Private use is permitted
+
+## Third-Party Components
+
+Some templates may include or reference third-party libraries and frameworks,
+each governed by their own licenses:
+
+- Flutter: BSD 3-Clause License
+- React: MIT License
+- Next.js: MIT License
+- Dart: BSD 3-Clause License
+- TypeScript: Apache License 2.0
+
+Please review the licenses of any dependencies you use in your projects.
+
+## Disclaimer
+
+These templates are provided as starting points for development. Vivacity Digital
+makes no warranties about their suitability for your specific use case. You are
+responsible for:
+
+- Security reviews and audits
+- Performance testing and optimization
+- Compliance with applicable regulations
+- Testing in your specific environment
+- Updates and maintenance in your projects
+
+## Support
+
+This license does not include support, maintenance, or warranties. For professional
+support, please contact Vivacity Digital.

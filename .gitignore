@@ -1,0 +1,117 @@
+# Flutter and Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+pubspec.lock
+generated_plugin_binaries/
+.flutter
+
+# Environment and Secrets - NEVER COMMIT REAL VALUES
+.env
+.env.local
+.env.*.local
+.env.development.local
+.env.staging.local
+.env.production
+.env.staging
+.env.production.local
+
+# Signing Keys and Certificates - NEVER COMMIT
+*.jks
+*.keystore
+*.p8
+*.p12
+*.pfx
+*.cer
+*.key
+*.pem
+*.crt
+*.pks8
+upload-keystore.jks
+
+# Firebase Configuration
+google-services.json
+GoogleService-Info.plist
+firebase-debug.log
+
+# API Keys and Credentials
+secrets.json
+.env.secrets
+credentials.json
+
+# IDE and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.code-workspace
+*.iml
+*.ipr
+*.iws
+
+# Platform specific - Android
+.gradle/
+local.properties
+GeneratedPluginRegistrant.java
+gradlew
+gradlew.bat
+android/.gradle/
+android/local.properties
+android/.settings/
+android/build/
+android/.classpath
+android/.project
+android/app/debug/
+android/app/profile/
+android/app/release/
+android/app/outputs/
+
+# Platform specific - iOS
+ios/Pods/
+ios/Podfile.lock
+ios/.symlinks/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/ephemeralmodules.txt
+ios/.xcode_select_version
+ios/Runner/GeneratedPluginRegistrant.*
+ios/Runner.xcworkspace/xcuserdata/
+ios/Pods/
+ios/Runner.xcodeproj/xcuserdata/
+ios/Runner.xcodeproj/project.xcworkspace/xcuserdata/
+
+# Temporary files
+*.log
+*.swp
+*~
+.DS_Store
+.tmp
+tmp/
+temp/
+
+# Coverage
+coverage/
+.coverage/
+lcov.info
+
+# Generated files
+lib/generated/
+
+# OS Files
+Thumbs.db
+.AppleDouble
+.LSOverride
+._*

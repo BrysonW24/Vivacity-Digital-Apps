@@ -1,0 +1,32 @@
+{
+  "name": "@lib/analytics-tracking",
+  "version": "1.0.0",
+  "description": "Analytics and event tracking system",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prebuild": "rimraf dist",
+    "dev": "tsc --watch",
+    "lint": "eslint src --ext ts,tsx",
+    "format": "prettier --write \"src/**/*.{ts,tsx,json,md}\"",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "posthog-js": "^1.104.2",
+    "mixpanel-browser": "^2.48.0",
+    "react-google-analytics": "^3.3.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.2.2",
+    "eslint": "^8.52.0",
+    "prettier": "^3.0.3",
+    "rimraf": "^5.0.5"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0"
+  }
+}

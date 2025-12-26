@@ -1,0 +1,58 @@
+name: Deploy to Google Play (Android)
+
+on:
+  push:
+    tags:
+      - 'journal-v*'
+      - 'fitcoach-v*'
+      - 'taskflow-v*'
+      - 'recipebank-v*'
+      - 'booking-hub-v*'
+      - 'service-hub-v*'
+
+jobs:
+  deploy:
+    name: Build and Deploy Release APK/AAB
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.13.0'
+          channel: 'stable'
+          cache: true
+
+      - name: Decode signing key
+        run: |
+          mkdir -p android/app
+          echo '${{ secrets.PROD_SIGNING_KEY_BASE64 }}' | base64 --decode > android/app/upload-keystore.jks
+
+      - name: Create key.properties
+        run: |
+          echo 'storePassword=${{ secrets.SIGNING_KEY_PASSWORD }}' > android/key.properties
+          echo 'keyPassword=${{ secrets.STORE_PASSWORD }}' >> android/key.properties
+          echo 'keyAlias=journal_release' >> android/key.properties
+          echo 'storeFile=upload-keystore.jks' >> android/key.properties
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Build release APK
+        run: flutter build apk --release --build-name=1.0.0
+
+      - name: Build app bundle (AAB)
+        run: flutter build appbundle --release --build-name=1.0.0
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-builds
+          path: |
+            build/app/outputs/apk/release/app-release.apk
+            build/app/outputs/bundle/release/app-release.aab

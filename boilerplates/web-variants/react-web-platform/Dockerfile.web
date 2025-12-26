@@ -1,0 +1,37 @@
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Copy package files
+COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile
+
+# Copy source code
+COPY . .
+
+# Build
+RUN pnpm build --filter=web-customer
+
+# Production stage - Nginx
+FROM nginx:alpine
+
+# Copy nginx config
+COPY docker-configs/nginx/nginx.conf /etc/nginx/nginx.conf
+
+# Copy built application
+COPY --from=builder /app/applications/web-customer/dist /usr/share/nginx/html
+
+# Expose port
+EXPOSE 80
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget --quiet --tries=1 --spider http://localhost:80 || exit 1
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]

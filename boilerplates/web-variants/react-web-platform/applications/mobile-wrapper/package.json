@@ -1,0 +1,43 @@
+{
+  "name": "mobile-wrapper",
+  "version": "1.0.0",
+  "description": "Capacitor mobile wrapper for iOS and Android",
+  "scripts": {
+    "build": "ionic build",
+    "build:ios": "ionic capacitor build ios",
+    "build:android": "ionic capacitor build android",
+    "sync": "ionic capacitor sync",
+    "open:ios": "ionic capacitor open ios",
+    "open:android": "ionic capacitor open android",
+    "lint": "eslint src --ext ts,tsx",
+    "format": "prettier --write \"src/**/*.{ts,tsx,json,md}\"",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@capacitor/core": "^5.5.1",
+    "@capacitor/ios": "^5.5.1",
+    "@capacitor/android": "^5.5.1",
+    "@capacitor/app": "^5.0.6",
+    "@capacitor/geolocation": "^5.0.6",
+    "@capacitor/network": "^5.0.6",
+    "@capacitor/push-notifications": "^5.0.6",
+    "@ionic/react": "^7.4.0",
+    "@ionic/react-router": "^7.4.0",
+    "ionicons": "^7.1.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.18.0",
+    "@lib/api-client": "workspace:*",
+    "@lib/common-utilities": "workspace:*",
+    "@lib/typescript-types": "workspace:*"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^5.5.1",
+    "@ionic/cli": "^7.0.0",
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "typescript": "^5.2.2",
+    "eslint": "^8.52.0",
+    "prettier": "^3.0.3"
+  }
+}
