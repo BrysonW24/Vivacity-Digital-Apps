@@ -1,0 +1,23 @@
+{
+  "name": "@lib/build-configs",
+  "version": "1.0.0",
+  "description": "Shared build configurations (ESLint, TypeScript, Tailwind, Prettier)",
+  "type": "module",
+  "scripts": {
+    "format": "prettier --write \"*.{js,json,md}\"",
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
+    "@typescript-eslint/parser": "^6.13.2",
+    "eslint": "^8.52.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "^3.0.3",
+    "typescript": "^5.2.2",
+    "tailwindcss": "^3.3.5",
+    "postcss": "^8.4.31",
+    "autoprefixer": "^10.4.16"
+  }
+}

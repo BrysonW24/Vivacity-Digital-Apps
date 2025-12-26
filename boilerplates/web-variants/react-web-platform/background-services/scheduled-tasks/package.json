@@ -1,0 +1,35 @@
+{
+  "name": "scheduled-tasks",
+  "version": "1.0.0",
+  "description": "Scheduled tasks and cron jobs service",
+  "type": "module",
+  "main": "dist/main.js",
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "tsc",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "start": "node dist/main.js",
+    "start:dev": "tsx watch src/main.ts",
+    "lint": "eslint src --ext ts",
+    "type-check": "tsc --noEmit",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "node-cron": "^3.0.2",
+    "pino": "^8.17.1",
+    "axios": "^1.6.2",
+    "dotenv": "^16.3.1",
+    "@lib/database-schema": "workspace:*",
+    "@lib/common-utilities": "workspace:*",
+    "@lib/typescript-types": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.2.2",
+    "tsx": "^4.6.2",
+    "eslint": "^8.52.0",
+    "prettier": "^3.0.3",
+    "rimraf": "^5.0.5",
+    "vitest": "^0.34.6"
+  }
+}

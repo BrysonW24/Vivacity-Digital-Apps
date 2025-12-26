@@ -1,0 +1,802 @@
+# 🎯 Vivacity Digital Boilerplates
+
+Production-ready boilerplate templates for building scalable mobile and web applications with clean architecture, best practices, and comprehensive tooling.
+
+**Current Version:** 1.0.0
+**Last Updated:** December 21, 2025
+**Status:** ✅ Ready for Production
+
+---
+
+## 📚 Table of Contents
+
+- [Quick Start](#quick-start)
+- [Boilerplate Options](#boilerplate-options)
+- [Mobile Boilerplates (Flutter)](#mobile-boilerplates-flutter)
+- [Web Boilerplates](#web-boilerplates)
+- [Shared Features](#shared-features)
+- [Architecture Overview](#architecture-overview)
+- [Getting Started](#getting-started)
+- [Project Structure](#project-structure)
+- [CLI Tools & Scripts](#cli-tools--scripts)
+- [Documentation](#documentation)
+- [Contributing](#contributing)
+- [Support](#support)
+
+---
+
+## 🚀 Quick Start
+
+Choose the boilerplate that best fits your project needs:
+
+### Mobile Development
+```bash
+# MVP or learning - lightweight foundation
+git clone <repo> my-app && cd my-app/boilerplates/app-variants/flutter-small-app
+
+# AWS-integrated backend
+git clone <repo> my-app && cd my-app/boilerplates/app-variants/flutter-small-app-aws
+
+# Google Cloud Platform
+git clone <repo> my-app && cd my-app/boilerplates/app-variants/flutter-small-app-gcp
+
+# On-premise/Kubernetes deployment
+git clone <repo> my-app && cd my-app/boilerplates/app-variants/flutter-small-app-onpremis
+```
+
+### Web Development
+```bash
+# Next.js SSR application
+git clone <repo> my-app && cd my-app/boilerplates/web-variants/next-app
+
+# Full-stack React monorepo with mobile
+git clone <repo> my-app && cd my-app/boilerplates/web-variants/react-web-platform
+```
+
+---
+
+## 📋 Boilerplate Options
+
+### Decision Matrix
+
+| Need | Boilerplate | Best For |
+|------|-------------|----------|
+| 📱 Mobile MVP | `flutter-small-app` | Quick prototypes, learning, simple apps |
+| ☁️ AWS Backend | `flutter-small-app-aws` | AWS Amplify, DynamoDB, S3 integrations |
+| 🔵 GCP Backend | `flutter-small-app-gcp` | Firestore, Cloud Run, BigQuery |
+| 🏢 Enterprise | `flutter-small-app-onpremis` | Kubernetes, Docker, self-hosted backends |
+| 🌐 Server-Side Web | `next-app` | SSR websites, API routes, Vercel deployment |
+| 💼 Fullstack Platform | `react-web-platform` | Complex web apps, monorepo, multiple services |
+
+---
+
+## 📱 Mobile Boilerplates (Flutter)
+
+All Flutter boilerplates share the same **foundation** with cloud-specific variations.
+
+### Core Features (All Variants)
+
+#### 🏗️ Architecture
+- **Clean Architecture** - 5-layer separation of concerns
+  - Presentation (Screens, Widgets)
+  - State Management (Providers)
+  - Repository (Data Access)
+  - Services (Business Logic)
+  - Models (Data Structures)
+
+#### 🔐 Authentication
+- ✅ Email/password login
+- ✅ Signup with validation
+- ✅ Forgot password flow
+- ✅ Email verification
+- ✅ Biometric support
+- ✅ Session management
+- ✅ Token refresh mechanism
+- ✅ Secure token storage
+
+#### 💾 Data Management
+- ✅ HTTP client with interceptors
+- ✅ SQLite local database
+- ✅ Secure storage for sensitive data
+- ✅ Shared preferences for settings
+- ✅ Error handling with typed exceptions
+- ✅ Request/response logging
+- ✅ Retry logic for failed requests
+
+#### 🎨 UI/UX
+- ✅ Material Design 3 components
+- ✅ Dark/light theme support
+- ✅ 9-language localization
+- ✅ 28 pre-built screens
+- ✅ 40+ reusable widgets
+- ✅ Responsive layouts
+- ✅ Loading states
+- ✅ Error handling UI
+
+#### 📦 State Management
+- ✅ Provider pattern
+- ✅ GetIt service locator
+- ✅ Automatic widget rebuilds
+- ✅ Consumer & Selector patterns
+- ✅ Scoped providers
+- ✅ ChangeNotifier classes
+
+#### 🧪 Testing
+- ✅ Unit test examples
+- ✅ Widget test templates
+- ✅ Mock setup with Mockito
+- ✅ Integration test framework
+- ✅ Test coverage tracking
+
+#### 📚 Code Quality
+- ✅ 100+ linting rules (flutter_lints)
+- ✅ Code generation (build_runner)
+- ✅ JSON serialization support
+- ✅ Model freezing (Freezed)
+- ✅ Consistent code style
+
+### Flutter: `flutter-small-app`
+**Best for:** MVP projects, learning, rapid prototyping
+
+```
+flutter-small-app/
+├── lib/
+│   ├── main.dart                    # Entry point
+│   ├── app.dart                     # Root widget
+│   ├── injection.dart               # Dependency injection
+│   ├── config/                      # Configuration
+│   ├── models/                      # Data models
+│   ├── providers/                   # State management
+│   ├── repositories/                # Data access
+│   ├── services/                    # Business logic
+│   ├── screens/                     # 28 pre-built screens
+│   ├── widgets/                     # 40+ reusable components
+│   ├── utils/                       # Utilities
+│   └── l10n/                        # Localization (9 languages)
+├── docs/
+│   ├── DECISIONS.md                 # Architecture decisions
+│   ├── IMPLEMENTATION_STATUS.md     # Feature checklist
+│   └── SCREENS_DOCUMENTATION.md     # Screen catalog
+├── scripts/
+│   └── health-check.sh              # Validation script
+└── pubspec.yaml                     # Dependencies
+```
+
+**Quick Setup:**
+```bash
+cd boilerplates/app-variants/flutter-small-app
+flutter pub get
+flutter pub run build_runner build
+flutter run
+```
+
+### Flutter: `flutter-small-app-aws`
+**Best for:** AWS-integrated applications
+
+**Additional Features:**
+- 🔐 AWS Cognito authentication
+- 📦 DynamoDB database integration
+- 📁 S3 file storage setup
+- 📊 CloudWatch logging
+- 🔑 AWS IAM configuration
+- ⚡ Lambda function support
+- 📱 AppSync GraphQL ready
+
+**Setup:**
+```bash
+cd boilerplates/app-variants/flutter-small-app-aws
+flutter pub get
+# Configure AWS Amplify
+amplify init
+amplify push
+flutter run
+```
+
+### Flutter: `flutter-small-app-gcp`
+**Best for:** Google Cloud Platform projects
+
+**Additional Features:**
+- 🔐 Firebase Auth integration
+- 🔥 Firestore database setup
+- 📁 Cloud Storage integration
+- 📊 BigQuery analytics ready
+- 🚀 Cloud Run deployment config
+- 💬 Pub/Sub messaging setup
+- 🔍 Cloud Search integration
+
+**Setup:**
+```bash
+cd boilerplates/app-variants/flutter-small-app-gcp
+flutter pub get
+# Configure Firebase
+flutterfire configure
+flutter run
+```
+
+### Flutter: `flutter-small-app-onpremis`
+**Best for:** Enterprise, self-hosted, Kubernetes deployments
+
+**Additional Features:**
+- 🐳 Docker containerization
+- ☸️ Kubernetes manifests
+- 🔐 TLS/SSL certificate support
+- 📦 Private registry integration
+- 🔄 CI/CD pipeline setup
+- 🏢 Enterprise proxy support
+- 📊 Prometheus monitoring ready
+- 🔔 Custom backend integration
+
+**Setup:**
+```bash
+cd boilerplates/app-variants/flutter-small-app-onpremis
+flutter pub get
+docker build -t my-app:1.0.0 .
+kubectl apply -f k8s/
+flutter run
+```
+
+---
+
+## 🌐 Web Boilerplates
+
+### Next.js: `next-app`
+**Best for:** Server-side rendered websites, hybrid applications
+
+**Tech Stack:**
+- Next.js 14+ with App Router
+- TypeScript
+- Tailwind CSS
+- PostgreSQL
+- Docker-ready
+
+**Features:**
+- ✅ Server & client components
+- ✅ API routes
+- ✅ Image optimization
+- ✅ Built-in analytics
+- ✅ ISR (Incremental Static Regeneration)
+- ✅ Middleware support
+- ✅ Vercel ready deployment
+- ✅ Dark mode support
+
+**Project Structure:**
+```
+next-app/
+├── app/
+│   ├── layout.tsx               # Root layout
+│   ├── page.tsx                 # Home page
+│   ├── api/                     # API routes
+│   │   └── [endpoint]/
+│   └── [dynamic]/               # Dynamic routes
+├── components/                   # React components
+├── lib/
+│   ├── api/                     # API client
+│   ├── types/                   # TypeScript types
+│   └── utils/                   # Utilities
+├── styles/                       # Global styles
+├── public/                       # Static assets
+└── package.json
+```
+
+**Quick Setup:**
+```bash
+cd boilerplates/web-variants/next-app
+npm install
+npm run dev
+# Visit http://localhost:3000
+```
+
+### React Fullstack: `react-web-platform`
+**Best for:** Large-scale applications, monorepo with multiple services
+
+**Architecture:**
+```
+react-web-platform/
+├── applications/                # 4 main apps
+│   ├── customer-web/            # Customer portal (React)
+│   ├── admin-web/               # Admin dashboard (React)
+│   ├── api-server/              # Node.js backend
+│   └── mobile-app/              # React Native/Capacitor
+│
+├── shared-packages/             # 9 shared libraries
+│   ├── ui-components/           # Reusable components
+│   ├── api-client/              # API communication
+│   ├── state-management/        # Redux store
+│   ├── types/                   # Shared TypeScript types
+│   ├── utils/                   # Common utilities
+│   ├── hooks/                   # Custom React hooks
+│   ├── constants/               # App constants
+│   ├── auth/                    # Authentication logic
+│   └── validators/              # Form validation
+│
+├── background-services/         # Worker processes
+│   ├── email-service/           # Email notifications
+│   ├── file-processor/          # File handling
+│   ├── analytics-worker/        # Data processing
+│   └── scheduler/               # Cron jobs
+│
+├── infrastructure/              # DevOps & deployment
+│   ├── docker/                  # Docker configs
+│   ├── kubernetes/              # K8s manifests
+│   ├── terraform/               # IaC
+│   ├── docker-compose.yml       # Local dev
+│   └── .github/workflows/       # CI/CD pipelines
+│
+├── documentation/               # Project docs
+├── test-suites/                 # Test configuration
+└── package.json                 # Monorepo root
+```
+
+**Tech Stack:**
+- React 18+
+- TypeScript
+- Redux Toolkit
+- Vite/Next.js
+- Node.js/Express
+- PostgreSQL
+- Docker & Kubernetes
+- GitHub Actions
+
+**Key Features:**
+- ✅ Monorepo with workspaces
+- ✅ 4 production applications
+- ✅ 9 shared packages
+- ✅ Complete authentication
+- ✅ Real-time capabilities
+- ✅ Background job processing
+- ✅ Full test coverage
+- ✅ Complete DevOps setup
+
+**Quick Setup:**
+```bash
+cd boilerplates/web-variants/react-web-platform
+npm install
+npm run setup              # Initialize all workspaces
+npm run dev               # Start development environment
+# Runs all services in parallel
+```
+
+**Running Specific Apps:**
+```bash
+npm run dev --workspace=customer-web
+npm run dev --workspace=admin-web
+npm run dev --workspace=api-server
+npm run dev --workspace=mobile-app
+```
+
+---
+
+## ✨ Shared Features
+
+### All Boilerplates Include
+
+#### 📖 Documentation
+- Architecture Decision Records (ADRs)
+- Implementation guides
+- API documentation
+- Setup instructions
+- Deployment guides
+- Troubleshooting guides
+
+#### 🧪 Testing
+- Unit test examples
+- Integration test templates
+- Test utilities
+- Mock data generators
+- Test coverage targets (80%+)
+
+#### 🔄 CI/CD
+- GitHub Actions workflows
+- Automated testing
+- Code quality checks
+- Deployment automation
+- Release management
+
+#### 🛠️ Development Tools
+- ESLint & Prettier configuration
+- Git hooks (husky)
+- Code generation scripts
+- Health check utilities
+- Development scripts
+
+#### 📊 Code Quality
+- Linting rules
+- Code formatting
+- Type checking (TypeScript/Dart)
+- Security scanning
+- Dependency management
+
+---
+
+## 🏗️ Architecture Overview
+
+### Clean Architecture Layers
+
+```
+┌─────────────────────────────────┐
+│        Presentation             │  ← UI, Screens, Widgets
+│     (Screens & Widgets)         │
+├─────────────────────────────────┤
+│      State Management           │  ← Providers, Redux, Stores
+│    (Business State Logic)       │
+├─────────────────────────────────┤
+│         Repository              │  ← Data Access Abstraction
+│   (Single Source of Truth)      │
+├─────────────────────────────────┤
+│          Services               │  ← Business Logic
+│      (API, Database, etc)       │
+├─────────────────────────────────┤
+│      Models & Data Layer        │  ← DTOs, Database, Entities
+│    (Infrastructure & APIs)      │
+└─────────────────────────────────┘
+```
+
+### Dependency Flow
+```
+Presentation → State Management → Repository → Services → Models
+```
+
+---
+
+## 🎯 Getting Started
+
+### Prerequisites
+
+**For Mobile (Flutter):**
+- Flutter SDK 3.19+
+- Dart SDK 3.0+
+- Android Studio / Xcode
+- Git
+
+**For Web:**
+- Node.js 18+
+- npm/yarn
+- Git
+- Docker (optional)
+
+### Step 1: Choose Your Boilerplate
+
+Review the decision matrix above and select the appropriate template.
+
+### Step 2: Clone & Setup
+
+```bash
+# Clone the repository
+git clone <your-repo-url> my-project
+cd my-project
+
+# Navigate to boilerplate
+cd boilerplates/app-variants/flutter-small-app
+# OR
+cd boilerplates/web-variants/next-app
+```
+
+### Step 3: Install Dependencies
+
+**Flutter:**
+```bash
+flutter pub get
+flutter pub run build_runner build --delete-conflicting-outputs
+flutter gen-l10n
+```
+
+**Web:**
+```bash
+npm install
+npm run setup  # For monorepos
+```
+
+### Step 4: Configure Environment
+
+```bash
+# Copy example env file
+cp .env.example .env
+
+# Update .env with your settings
+# - API endpoints
+# - API keys
+# - Database credentials
+# - Cloud service configs
+```
+
+### Step 5: Run the Application
+
+**Flutter:**
+```bash
+flutter run
+```
+
+**Web:**
+```bash
+npm run dev
+```
+
+### Step 6: Build for Production
+
+**Flutter:**
+```bash
+flutter build apk
+flutter build ios
+flutter build web
+```
+
+**Web:**
+```bash
+npm run build
+npm run start
+```
+
+---
+
+## 📁 Project Structure
+
+### Common Directory Structure
+
+```
+boilerplate/
+├── README.md                      # Project documentation
+├── pubspec.yaml (mobile)          # Dependencies
+├── package.json (web)             # NPM dependencies
+├── .env.example                   # Environment variables template
+├── .gitignore                     # Git ignore rules
+├── .github/
+│   └── workflows/                 # CI/CD pipelines
+├── docs/
+│   ├── ARCHITECTURE.md            # Architecture guide
+│   ├── DECISIONS.md               # Architecture decisions
+│   ├── API.md                     # API documentation
+│   └── DEPLOYMENT.md              # Deployment guide
+├── src/ or lib/                   # Application source code
+├── tests/                         # Test files
+├── scripts/                       # Build & utility scripts
+├── docker/                        # Docker configuration
+├── kubernetes/                    # Kubernetes manifests
+└── infrastructure/                # IaC and deployment configs
+```
+
+---
+
+## 🛠️ CLI Tools & Scripts
+
+### Flutter Boilerplates
+
+**Code Generation:**
+```bash
+# Generate code for models, JSON serialization, etc.
+flutter pub run build_runner build
+
+# Watch mode for continuous generation
+flutter pub run build_runner watch
+```
+
+**Localization:**
+```bash
+# Generate localization files
+flutter gen-l10n
+
+# Generate app icons
+flutter pub run flutter_launcher_icons
+
+# Generate splash screen
+flutter pub run flutter_native_splash:create
+```
+
+**Health Checks:**
+```bash
+# Validate boilerplate structure
+./scripts/health-check.sh
+
+# Verbose output
+./scripts/health-check.sh --verbose
+
+# Quick mode
+./scripts/health-check.sh --quick
+```
+
+**Code Generation Scripts:**
+```bash
+# Generate new screen
+./scripts/generate.sh screen HomeScreen
+
+# Generate new provider
+./scripts/generate.sh provider HomeProvider
+
+# Generate new service
+./scripts/generate.sh service AnalyticsService
+
+# Generate new repository
+./scripts/generate.sh repository ProductRepository
+```
+
+### Web Boilerplates
+
+**Development:**
+```bash
+npm run dev              # Start development server
+npm run build            # Build for production
+npm run start            # Start production server
+npm run lint             # Run linting
+npm run format           # Format code
+npm run type-check       # TypeScript type checking
+```
+
+**Testing:**
+```bash
+npm run test             # Run tests
+npm run test:watch      # Watch mode
+npm run test:coverage   # Generate coverage report
+```
+
+**Setup (Monorepo):**
+```bash
+npm run setup            # Install all dependencies
+npm run build            # Build all packages
+npm run dev              # Start all services
+```
+
+---
+
+## 📚 Documentation
+
+### In Each Boilerplate
+
+- **README.md** - Quick start guide
+- **docs/ARCHITECTURE.md** - Architecture overview
+- **docs/DECISIONS.md** - Architecture decision records
+- **docs/API.md** - API documentation
+- **docs/DEPLOYMENT.md** - Production deployment guide
+- **docs/SETUP.md** - Detailed setup instructions
+- **SCREENS_DOCUMENTATION.md** - Pre-built screens catalog (mobile)
+
+### Cloud-Specific Docs
+
+**AWS Boilerplate:**
+- AWS Amplify setup guide
+- DynamoDB configuration
+- Cognito integration
+- S3 file handling
+
+**GCP Boilerplate:**
+- Firebase setup
+- Firestore guide
+- Cloud Run deployment
+- BigQuery integration
+
+**On-Premise Boilerplate:**
+- Docker setup
+- Kubernetes deployment
+- Private registry configuration
+- Enterprise proxy setup
+
+---
+
+## 🤝 Contributing
+
+### Improving Boilerplates
+
+We welcome improvements! Here's how to contribute:
+
+1. **Fork the repository**
+2. **Create a feature branch:**
+   ```bash
+   git checkout -b feature/improve-boilerplate
+   ```
+3. **Make your changes** following the architecture patterns
+4. **Test thoroughly:**
+   ```bash
+   # Run health checks
+   ./scripts/health-check.sh
+   # Run tests
+   flutter test / npm test
+   ```
+5. **Commit with clear messages:**
+   ```bash
+   git commit -m "docs: add migration guide for boilerplate"
+   ```
+6. **Push and create a Pull Request**
+
+### Guidelines
+
+- Maintain clean architecture principles
+- Keep dependencies minimal and up-to-date
+- Add documentation for new features
+- Include test coverage (80%+)
+- Follow existing code style and patterns
+
+---
+
+## 🔗 Related Resources
+
+- [Official Flutter Documentation](https://flutter.dev)
+- [Next.js Documentation](https://nextjs.org/docs)
+- [React Documentation](https://react.dev)
+- [Clean Architecture Guide](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+
+---
+
+## ❓ Support
+
+### Getting Help
+
+1. **Check Documentation** - Review docs/ folder in boilerplate
+2. **Search Issues** - Look for similar problems on GitHub
+3. **Create Issue** - Report bugs or request features
+4. **Discussion Forum** - Ask questions in discussions
+
+### Common Issues
+
+**Flutter build fails:**
+```bash
+flutter clean
+flutter pub get
+flutter pub run build_runner build --delete-conflicting-outputs
+```
+
+**Dependencies conflict:**
+```bash
+flutter pub upgrade
+flutter pub get
+```
+
+**Port already in use (Web):**
+```bash
+npm run dev -- --port 3001
+```
+
+**Yarn/npm issues:**
+```bash
+npm cache clean --force
+rm -rf node_modules package-lock.json
+npm install
+```
+
+---
+
+## 📋 Checklist for New Projects
+
+Before deploying to production:
+
+- [ ] Review architecture documentation
+- [ ] Update environment variables
+- [ ] Configure API endpoints
+- [ ] Set up authentication
+- [ ] Configure database
+- [ ] Run health checks (`./scripts/health-check.sh`)
+- [ ] Run full test suite
+- [ ] Build for production
+- [ ] Review security settings
+- [ ] Set up CI/CD pipeline
+- [ ] Configure monitoring/logging
+- [ ] Deploy and test in staging
+- [ ] Deploy to production
+
+---
+
+## 📅 Version History
+
+| Version | Date | Changes |
+|---------|------|---------|
+| 1.0.0 | Dec 21, 2025 | Initial release with 6 boilerplates |
+
+---
+
+## 📄 License
+
+MIT License - See LICENSE file for details
+
+---
+
+## 🎉 Quick Links
+
+- **Flutter Small App:** `app-variants/flutter-small-app/`
+- **AWS Integration:** `app-variants/flutter-small-app-aws/`
+- **Google Cloud:** `app-variants/flutter-small-app-gcp/`
+- **On-Premise:** `app-variants/flutter-small-app-onpremis/`
+- **Next.js:** `web-variants/next-app/`
+- **React Platform:** `web-variants/react-web-platform/`
+
+---
+
+**Made with ❤️ by Vivacity Digital**
+
+For the latest updates, visit: [GitHub Repository](https://github.com/vivacity-digital/boilerplates)

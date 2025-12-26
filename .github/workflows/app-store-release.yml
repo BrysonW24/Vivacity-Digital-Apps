@@ -1,0 +1,186 @@
+name: App Store Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release'
+        required: true
+        type: string
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    name: Create GitHub Release
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            TAG="${{ github.ref }}"
+            TAG="${TAG#refs/tags/}"
+          else
+            TAG="${{ github.event.inputs.version }}"
+          fi
+
+          # Generate changelog between tags
+          if git describe --tags --abbrev=0 HEAD~ 2>/dev/null; then
+            PREV_TAG=$(git describe --tags --abbrev=0 HEAD~ 2>/dev/null)
+            CHANGELOG=$(git log ${PREV_TAG}..HEAD --oneline)
+          else
+            CHANGELOG=$(git log --oneline)
+          fi
+
+          echo "TAG=$TAG" >> $GITHUB_OUTPUT
+          echo "CHANGELOG=$CHANGELOG" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.changelog.outputs.TAG }}
+          body: |
+            ## Changes in this Release
+
+            ${{ steps.changelog.outputs.CHANGELOG }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-and-deploy-android:
+    runs-on: ubuntu-latest
+    name: Build and Deploy to Google Play
+    needs: release
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.0'
+          channel: 'stable'
+
+      - name: Get dependencies
+        run: |
+          cd client-projects/active/journal-app
+          flutter pub get
+
+      - name: Decode Android keystore
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_B64 }}" | base64 -d > ~/keystore.jks
+
+      - name: Build Android App Bundle
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          cd client-projects/active/journal-app
+          flutter build appbundle \
+            --build-number=${{ github.run_number }} \
+            --build-name=${{ needs.release.outputs.version }}
+
+      - name: Upload to Google Play
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAYSTORE_SERVICE_ACCOUNT }}
+          packageName: com.vivacity.journalapp
+          releaseFiles: 'client-projects/active/journal-app/build/app/outputs/bundle/release/app-release.aab'
+          track: 'internal'
+          status: 'draft'
+        continue-on-error: true
+
+  build-and-deploy-ios:
+    runs-on: macos-latest
+    name: Build and Deploy to App Store
+    needs: release
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.0'
+          channel: 'stable'
+
+      - name: Install Apple certificate and provisioning profile
+        env:
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+          BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.BUILD_PROVISION_PROFILE_BASE64 }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          # Create variables
+          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+          PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+
+          # import certificate and provisioning profile from secrets
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode --output $CERTIFICATE_PATH
+          echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode --output $PP_PATH
+
+          # create temporary keychain
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+
+          # import certificate to keychain
+          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+
+          # move provisioning profile
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+
+      - name: Get dependencies
+        run: |
+          cd client-projects/active/journal-app
+          flutter pub get
+
+      - name: Build iOS App
+        run: |
+          cd client-projects/active/journal-app
+          flutter build ios \
+            --release \
+            --build-number=${{ github.run_number }} \
+            --build-name=${{ needs.release.outputs.version }}
+
+      - name: Upload to TestFlight
+        uses: apple-actions/upload-testflight-build@v1
+        with:
+          app-path: 'client-projects/active/journal-app/build/ios/iphoneos/Runner.app'
+          issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
+          api-key-id: ${{ secrets.APPSTORE_API_KEY_ID }}
+          api-private-key: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
+        continue-on-error: true
+
+  notify:
+    runs-on: ubuntu-latest
+    name: Notify Release
+    needs: [ release, build-and-deploy-android, build-and-deploy-ios ]
+    if: always()
+
+    steps:
+      - name: Create deployment summary
+        run: |
+          echo "## Release Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- Release Created: ${{ needs.release.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Android Build: ${{ needs.build-and-deploy-android.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- iOS Build: ${{ needs.build-and-deploy-ios.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Check the Actions tab for detailed logs." >> $GITHUB_STEP_SUMMARY

@@ -1,0 +1,39 @@
+{
+  "name": "vivacity-digital-platform",
+  "version": "1.0.0",
+  "description": "Vivacity Digital - App Development Platform for Small Businesses",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vivacity-digital/vivacity-digital-apps.git"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "scripts": {
+    "setup": "npm install && npm run config:init",
+    "config:init": "node scripts/setup-config.js",
+    "lint": "eslint . --ext .js,.ts,.json",
+    "lint:fix": "eslint . --ext .js,.ts,.json --fix",
+    "format": "prettier --write .",
+    "validate": "npm run lint && npm run format",
+    "docs": "node scripts/generate-docs.js",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
+    "version": "npm run changelog && git add CHANGELOG.md"
+  },
+  "devDependencies": {
+    "eslint": "^8.54.0",
+    "prettier": "^3.1.0",
+    "conventional-changelog-cli": "^4.1.0"
+  },
+  "keywords": [
+    "flutter",
+    "mobile",
+    "business",
+    "platform",
+    "app-development"
+  ],
+  "author": "Vivacity Digital",
+  "license": "MIT"
+}

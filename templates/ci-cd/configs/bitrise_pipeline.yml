@@ -1,0 +1,212 @@
+format_version: '8'
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+
+workflows:
+  primary:
+    description: Primary workflow for Flutter app CI/CD
+    steps:
+    - activate-ssh-key@4:
+        run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
+
+    - git-clone@6: {}
+
+    - flutter-installer@0:
+        inputs:
+        - flutter_version: '3.19.0'
+        - is_update: 'true'
+
+    - flutter-analyze@0:
+        inputs:
+        - project_location: "$BITRISE_SOURCE_DIR"
+
+    - flutter-test@0:
+        inputs:
+        - project_location: "$BITRISE_SOURCE_DIR"
+        - additional_params: "--coverage"
+
+    - codecov@1:
+        inputs:
+        - file_path: "coverage/lcov.info"
+        run_if: '{{getenv "CODECOV_TOKEN" | ne ""}}'
+
+    - flutter-build@0:
+        inputs:
+        - project_location: "$BITRISE_SOURCE_DIR"
+        - platform: "android"
+        - ios_output_type: "apk"
+        - additional_build_params: "--release --split-per-abi"
+
+    - deploy-to-bitrise-io@2: {}
+
+    - slack@3:
+        inputs:
+        - webhook_url: "$SLACK_WEBHOOK_URL"
+        - channel: "#ci-cd"
+        - message: "Android build completed successfully!"
+        run_if: '{{getenv "SLACK_WEBHOOK_URL" | ne ""}}'
+
+  ios:
+    description: iOS specific workflow
+    steps:
+    - activate-ssh-key@4:
+        run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
+
+    - git-clone@6: {}
+
+    - flutter-installer@0:
+        inputs:
+        - flutter_version: '3.19.0'
+        - is_update: 'true'
+
+    - certificate-and-profile-installer@1: {}
+
+    - flutter-analyze@0:
+        inputs:
+        - project_location: "$BITRISE_SOURCE_DIR"
+
+    - flutter-test@0:
+        inputs:
+        - project_location: "$BITRISE_SOURCE_DIR"
+
+    - flutter-build@0:
+        inputs:
+        - project_location: "$BITRISE_SOURCE_DIR"
+        - platform: "ios"
+        - ios_output_type: "app"
+
+    - xcode-archive@4:
+        inputs:
+        - project_path: "$BITRISE_SOURCE_DIR/ios/Runner.xcodeproj"
+        - scheme: "Runner"
+        - export_method: "ad-hoc"
+        - configuration: "Release"
+
+    - deploy-to-bitrise-io@2: {}
+
+    - slack@3:
+        inputs:
+        - webhook_url: "$SLACK_WEBHOOK_URL"
+        - channel: "#ci-cd"
+        - message: "iOS build completed successfully!"
+        run_if: '{{getenv "SLACK_WEBHOOK_URL" | ne ""}}'
+
+  deploy-staging:
+    description: Deploy to staging environment
+    steps:
+    - activate-ssh-key@4:
+        run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
+
+    - git-clone@6: {}
+
+    - flutter-installer@0:
+        inputs:
+        - flutter_version: '3.19.0'
+        - is_update: 'true'
+
+    # Build Android APK for staging
+    - flutter-build@0:
+        inputs:
+        - project_location: "$BITRISE_SOURCE_DIR"
+        - platform: "android"
+        - ios_output_type: "apk"
+        - additional_build_params: "--release --split-per-abi --flavor staging"
+
+    # Build iOS for staging
+    - flutter-build@0:
+        inputs:
+        - project_location: "$BITRISE_SOURCE_DIR"
+        - platform: "ios"
+        - ios_output_type: "app"
+        - additional_build_params: "--flavor staging"
+
+    - firebase-app-distribution@0:
+        inputs:
+        - firebase_token: "$FIREBASE_TOKEN"
+        - app_path: "$BITRISE_APK_PATH"
+        - groups: "qa-team,developers"
+        - release_notes: "Staging deployment from Bitrise"
+
+    - slack@3:
+        inputs:
+        - webhook_url: "$SLACK_WEBHOOK_URL"
+        - channel: "#staging"
+        - message: "Staging deployment completed!"
+        run_if: '{{getenv "SLACK_WEBHOOK_URL" | ne ""}}'
+
+  deploy-production:
+    description: Deploy to production stores
+    steps:
+    - activate-ssh-key@4:
+        run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
+
+    - git-clone@6: {}
+
+    - flutter-installer@0:
+        inputs:
+        - flutter_version: '3.19.0'
+        - is_update: 'true'
+
+    # Android Production Build
+    - flutter-build@0:
+        inputs:
+        - project_location: "$BITRISE_SOURCE_DIR"
+        - platform: "android"
+        - ios_output_type: "aab"  # Android App Bundle for Play Store
+        - additional_build_params: "--release"
+
+    # iOS Production Build
+    - flutter-build@0:
+        inputs:
+        - project_location: "$BITRISE_SOURCE_DIR"
+        - platform: "ios"
+        - ios_output_type: "app"
+
+    - certificate-and-profile-installer@1: {}
+
+    - xcode-archive@4:
+        inputs:
+        - project_path: "$BITRISE_SOURCE_DIR/ios/Runner.xcodeproj"
+        - scheme: "Runner"
+        - export_method: "app-store"
+        - configuration: "Release"
+
+    # Deploy to Google Play Store
+    - google-play-deploy@3:
+        inputs:
+        - package_name: "$ANDROID_PACKAGE_NAME"
+        - track: "internal"
+        - user_fraction: "0.1"
+        - service_account_json_key_path: "$BITRISE_SOURCE_DIR/google-play-key.json"
+        - apk_path: "$BITRISE_AAB_PATH"
+
+    # Deploy to TestFlight (for beta testing before App Store)
+    - pilot@1:
+        inputs:
+        - api_key_path: "$BITRISE_SOURCE_DIR/app_store_connect_api_key.json"
+        - app_identifier: "$IOS_BUNDLE_ID"
+        - distribute_external: "false"
+        - groups: "internal-testers"
+
+    - slack@3:
+        inputs:
+        - webhook_url: "$SLACK_WEBHOOK_URL"
+        - channel: "#production"
+        - message: "Production deployment completed!"
+        run_if: '{{getenv "SLACK_WEBHOOK_URL" | ne ""}}'
+
+# Required Environment Variables:
+# - ANDROID_PACKAGE_NAME: Your Android app package name
+# - IOS_BUNDLE_ID: Your iOS bundle identifier
+# - FIREBASE_TOKEN: Firebase CLI token
+# - SLACK_WEBHOOK_URL: Slack webhook URL
+# - CODECOV_TOKEN: Codecov token for coverage reporting
+
+# Required Files to upload in Bitrise:
+# - google-play-key.json: Google Play Store service account JSON
+# - app_store_connect_api_key.json: App Store Connect API key
+# - iOS certificates and profiles
+
+# Triggers (configure in Bitrise dashboard):
+# - Push to main branch: Run deploy-production
+# - Push to development branch: Run deploy-staging
+# - Pull requests: Run primary workflow

@@ -1,0 +1,304 @@
+# GitLab CI/CD Pipeline for Flutter Apps
+# This pipeline provides comprehensive CI/CD for Flutter applications
+# including testing, building, and deployment to various platforms
+
+stages:
+  - analyze
+  - test
+  - build
+  - deploy_staging
+  - deploy_production
+
+variables:
+  FLUTTER_VERSION: "3.19.0"
+  FLUTTER_CHANNEL: "stable"
+
+# Cache Flutter dependencies
+cache:
+  key: "$CI_COMMIT_REF_SLUG"
+  paths:
+    - ~/.pub-cache/
+    - .flutter/
+    - build/
+
+# Analyze stage
+analyze:
+  stage: analyze
+  image: cirrusci/flutter:$FLUTTER_VERSION
+  before_script:
+    - flutter config --no-analytics
+    - flutter pub get
+  script:
+    - flutter analyze --no-pub
+    - flutter format --set-exit-if-changed lib/ test/
+  allow_failure: false
+  only:
+    - merge_requests
+    - main
+    - development
+    - test
+
+# Test stage
+test:
+  stage: test
+  image: cirrusci/flutter:$FLUTTER_VERSION
+  before_script:
+    - flutter config --no-analytics
+    - flutter pub get
+  script:
+    - flutter test --coverage
+  coverage: '/lines\.\.\.\.: \d+\.\d+/'
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/lcov.info
+    expire_in: 1 week
+  allow_failure: false
+  only:
+    - merge_requests
+    - main
+    - development
+    - test
+
+# Build Android APK
+build_android:
+  stage: build
+  image: cirrusci/flutter:$FLUTTER_VERSION
+  before_script:
+    - flutter config --no-analytics
+    - flutter pub get
+  script:
+    - flutter build apk --release --split-per-abi
+  artifacts:
+    paths:
+      - build/app/outputs/flutter-apk/*.apk
+    expire_in: 1 week
+  only:
+    - main
+    - development
+    - test
+
+# Build Android AAB (for Google Play Store)
+build_android_aab:
+  stage: build
+  image: cirrusci/flutter:$FLUTTER_VERSION
+  before_script:
+    - flutter config --no-analytics
+    - flutter pub get
+  script:
+    - flutter build appbundle --release
+  artifacts:
+    paths:
+      - build/app/outputs/bundle/release/*.aab
+    expire_in: 1 week
+  only:
+    - main
+
+# Build iOS (requires macOS runner)
+build_ios:
+  stage: build
+  tags:
+    - macos
+    - ios
+  image: cirrusci/flutter:$FLUTTER_VERSION
+  before_script:
+    - flutter config --no-analytics
+    - flutter pub get
+    - cd ios && pod install
+  script:
+    - flutter build ios --release --no-codesign
+  artifacts:
+    paths:
+      - build/ios/iphoneos/Runner.app
+    expire_in: 1 week
+  only:
+    - main
+    - development
+
+# Build Web
+build_web:
+  stage: build
+  image: cirrusci/flutter:$FLUTTER_VERSION
+  before_script:
+    - flutter config --no-analytics
+    - flutter pub get
+  script:
+    - flutter build web --release
+  artifacts:
+    paths:
+      - build/web/
+    expire_in: 1 week
+  only:
+    - main
+    - development
+
+# Deploy to staging
+deploy_staging:
+  stage: deploy_staging
+  image: google/cloud-sdk:alpine
+  environment:
+    name: staging
+    url: https://staging.your-app.com
+  before_script:
+    - echo $FIREBASE_SERVICE_ACCOUNT > firebase-key.json
+    - gcloud auth activate-service-account --key-file=firebase-key.json
+    - gcloud config set project $FIREBASE_PROJECT_ID
+  script:
+    - echo "Deploying to staging environment..."
+    # Deploy Android APK to Firebase App Distribution
+    - firebase appdistribution:distribute build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+      --app $FIREBASE_APP_ID
+      --groups "qa-team,developers"
+      --release-notes "Staging deployment from GitLab CI"
+    # Deploy web to Firebase Hosting staging
+    - firebase deploy --only hosting --project $FIREBASE_PROJECT_ID-staging
+  dependencies:
+    - build_android
+    - build_web
+  only:
+    - development
+
+# Deploy to production
+deploy_production:
+  stage: deploy_production
+  image: google/cloud-sdk:alpine
+  environment:
+    name: production
+    url: https://your-app.com
+  before_script:
+    - echo $FIREBASE_SERVICE_ACCOUNT > firebase-key.json
+    - gcloud auth activate-service-account --key-file=firebase-key.json
+    - gcloud config set project $FIREBASE_PROJECT_ID
+    - echo $GOOGLE_PLAY_KEY > google-play-key.json
+  script:
+    - echo "Deploying to production..."
+    # Deploy to Google Play Store
+    - |
+      if [ -f build/app/outputs/bundle/release/app-release.aab ]; then
+        echo "Uploading AAB to Google Play Store..."
+        # Use Google Play Publisher API or fastlane
+        # fastlane supply --aab build/app/outputs/bundle/release/app-release.aab --track internal
+      fi
+    # Deploy web to Firebase Hosting production
+    - firebase deploy --only hosting --project $FIREBASE_PROJECT_ID
+  dependencies:
+    - build_android_aab
+    - build_web
+  when: manual  # Require manual trigger for production deployments
+  only:
+    - main
+
+# Deploy iOS to TestFlight
+deploy_ios_testflight:
+  stage: deploy_staging
+  tags:
+    - macos
+    - ios
+  image: macos:latest
+  environment:
+    name: staging
+  before_script:
+    - flutter config --no-analytics
+    - flutter pub get
+    - cd ios && pod install
+    - bundle install
+  script:
+    - bundle exec fastlane beta
+  dependencies:
+    - build_ios
+  only:
+    - development
+
+# Deploy iOS to App Store
+deploy_ios_appstore:
+  stage: deploy_production
+  tags:
+    - macos
+    - ios
+  image: macos:latest
+  environment:
+    name: production
+  before_script:
+    - flutter config --no-analytics
+    - flutter pub get
+    - cd ios && pod install
+    - bundle install
+  script:
+    - bundle exec fastlane release
+  dependencies:
+    - build_ios
+  when: manual
+  only:
+    - main
+
+# Notification job
+notify:
+  stage: deploy_production
+  image: curlimages/curl:latest
+  script:
+    - |
+      curl -X POST -H 'Content-type: application/json' \
+      --data '{"text":"Flutter CI/CD Pipeline completed - '"$CI_JOB_STATUS"'"}' \
+      $SLACK_WEBHOOK_URL
+  when: always
+  allow_failure: true
+  only:
+    - main
+    - development
+
+# Scheduled security audit
+security_audit:
+  stage: test
+  image: cirrusci/flutter:$FLUTTER_VERSION
+  before_script:
+    - flutter config --no-analytics
+    - flutter pub get
+  script:
+    - flutter pub outdated
+    - flutter pub deps
+  allow_failure: true
+  only:
+    schedules:
+      - cron: "0 2 * * 1"  # Weekly on Monday at 2 AM
+
+# Performance testing
+performance_test:
+  stage: test
+  image: cirrusci/flutter:$FLUTTER_VERSION
+  before_script:
+    - flutter config --no-analytics
+    - flutter pub get
+  script:
+    - flutter drive --target=test_driver/performance_test.dart
+  artifacts:
+    paths:
+      - test_driver/performance_results.json
+    expire_in: 1 week
+  allow_failure: true
+  only:
+    - main
+    - development
+
+# Required GitLab CI/CD Variables (Settings > CI/CD > Variables):
+# - FIREBASE_SERVICE_ACCOUNT: Firebase service account JSON (base64 encoded)
+# - FIREBASE_PROJECT_ID: Firebase project ID
+# - FIREBASE_APP_ID: Firebase app ID
+# - GOOGLE_PLAY_KEY: Google Play Store service account JSON (base64 encoded)
+# - SLACK_WEBHOOK_URL: Slack webhook URL for notifications
+
+# Required Runner Tags:
+# - macos: For iOS builds
+# - ios: For iOS specific operations
+
+# GitLab Pages deployment (optional)
+pages:
+  stage: deploy_staging
+  image: alpine:latest
+  script:
+    - mv build/web public
+  artifacts:
+    paths:
+      - public
+  only:
+    - development

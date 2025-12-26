@@ -1,0 +1,202 @@
+name: Flutter CI/CD
+
+on:
+  push:
+    branches: [ main, development, test ]
+  pull_request:
+    branches: [ main, development, test ]
+
+jobs:
+  analyze:
+    name: Analyze & Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.0'
+          channel: 'stable'
+
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run Flutter Analyzer
+        run: flutter analyze
+
+      - name: Run tests
+        run: flutter test --coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: coverage/lcov.info
+
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    needs: analyze
+    if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.0'
+          channel: 'stable'
+
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        run: flutter build apk --release --split-per-abi
+
+      - name: Upload APK artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: android-apk
+          path: build/app/outputs/flutter-apk/*.apk
+
+  build-ios:
+    name: Build iOS
+    runs-on: macos-latest
+    needs: analyze
+    if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.0'
+          channel: 'stable'
+
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Install iOS dependencies
+        run: |
+          cd ios
+          pod install
+
+      - name: Build iOS
+        run: flutter build ios --release --no-codesign
+
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [build-android, build-ios]
+    if: github.ref == 'refs/heads/development' && github.event_name != 'pull_request'
+    environment: staging
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download Android APK
+        uses: actions/download-artifact@v3
+        with:
+          name: android-apk
+
+      - name: Deploy to Firebase App Distribution
+        run: |
+          echo "Deploying to Firebase App Distribution..."
+          # TODO: Add Firebase CLI commands for app distribution
+          # firebase appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk \
+          #   --app $FIREBASE_APP_ID \
+          #   --groups "qa-team" \
+          #   --release-notes "Staging deployment from GitHub Actions"
+
+      - name: Deploy to TestFlight
+        run: |
+          echo "Deploying to TestFlight..."
+          # TODO: Add fastlane commands for TestFlight deployment
+          # cd ios && fastlane beta
+
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [build-android, build-ios]
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download Android APK
+        uses: actions/download-artifact@v3
+        with:
+          name: android-apk
+
+      - name: Deploy to Google Play Store
+        run: |
+          echo "Deploying to Google Play Store..."
+          # TODO: Add Google Play Store deployment
+          # Add fastlane or Google Play Publisher API commands
+
+      - name: Deploy to Apple App Store
+        run: |
+          echo "Deploying to Apple App Store..."
+          # TODO: Add App Store Connect deployment
+          # cd ios && fastlane release
+
+  notify:
+    name: Notify on Completion
+    runs-on: ubuntu-latest
+    needs: [deploy-staging, deploy-production]
+    if: always()
+    steps:
+      - name: Send Slack notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: "Flutter CI/CD pipeline completed"
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: env.SLACK_WEBHOOK_URL != null
+
+# Environment Variables to configure:
+# - FIREBASE_APP_ID: Your Firebase app ID
+# - SLACK_WEBHOOK_URL: Slack webhook URL for notifications
+# - GOOGLE_PLAY_JSON_KEY: Google Play Store service account JSON
+# - APP_STORE_CONNECT_PRIVATE_KEY: App Store Connect private key
+# - APP_STORE_CONNECT_KEY_ID: App Store Connect key ID
+# - APP_STORE_CONNECT_ISSUER_ID: App Store Connect issuer ID
+
+# Required Secrets (add to GitHub repository settings):
+# - FIREBASE_TOKEN: Firebase CLI token
+# - MATCH_PASSWORD: Fastlane match password (for iOS code signing)
+# - SLACK_WEBHOOK_URL: Slack webhook URL
+
+# Optional: Configure branch protection rules to require CI passing
