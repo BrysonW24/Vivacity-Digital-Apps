@@ -1,0 +1,13 @@
+// Generated Flutter iOS configuration
+// This file is generated during Flutter build process
+
+FLUTTER_ROOT=<generated>
+FLUTTER_APPLICATION_PATH=<generated>
+FLUTTER_BUILD_VERBOSE=false
+FLUTTER_BUILD_MODE=debug
+FLUTTER_TARGET_PLATFORM=ios
+FLUTTER_TARGET=lib/main.dart
+FLUTTER_FRAMEWORK_DIR=<generated>
+FLUTTER_BUILD_NAME=1.0.0
+FLUTTER_BUILD_NUMBER=1
+EXCLUDED_ARCHS[sdk=iphonesimulator*]=arm64

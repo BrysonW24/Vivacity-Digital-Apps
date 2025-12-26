@@ -1,0 +1,34 @@
+arb_dir: lib/l10n
+template_arb_file: app_en.arb
+output_localization_file: app_localizations.dart
+output_class: AppLocalizations
+
+preferred_supported_locales:
+  - en
+  - es
+  - fr
+  - de
+  - it
+  - pt
+  - ja
+  - zh
+  - ko
+
+# Locales to generate code for
+supported_locales:
+  - en    # English
+  - es    # Spanish
+  - fr    # French
+  - de    # German
+  - it    # Italian
+  - pt    # Portuguese
+  - ja    # Japanese
+  - zh    # Chinese (Simplified)
+  - ko    # Korean
+
+# Localization generation settings
+nullable_getter: false
+synthetic_locale: en
+
+# Enable/disable features
+use_deferred_loading: false

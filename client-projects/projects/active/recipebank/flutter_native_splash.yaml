@@ -1,0 +1,38 @@
+flutter_native_splash:
+  # This package generates native code to customize Flutter's default white native splash screen
+  # with background color and splash image.
+  # Customize the parameters below, and run the following command in the root of your project:
+  # flutter pub run flutter_native_splash:create
+
+  # color or background_path - the only required parameter.  It represents the background color of the native splash screen.
+  color: "#2196F3"
+
+  # Optional parameters:
+  # color_dark - the background color to use for the dark variant
+  color_dark: "#1565C0"
+
+  # image - the image to be used as the splash screen
+  image: assets/images/splash_image.png
+
+  # image_dark - the image to use in dark mode
+  image_dark: assets/images/splash_image_dark.png
+
+  # branding - path to brand image that will be placed on top of the background
+  branding: assets/images/branding.png
+  branding_dark: assets/images/branding_dark.png
+
+  # OPTIONAL
+  # The color_dark, image_dark, branding_dark are alternatives used when the device is in dark mode. If they are not specified, the non-dark versios will be used.
+  # If the image is a GIF, it will only animate on Android, it will appear as the first frame on iOS.
+  # If the android property is not specified, then it will use color and image path from above.
+  android_12:
+    # The image must be sized appropriately according to https://developer.android.com/about/versions/12/behavior-changes-12#splash-screen
+    image: assets/images/android_splash_12.png
+    image_dark: assets/images/android_splash_12_dark.png
+    branding: assets/images/branding.png
+    color: "#2196F3"
+    color_dark: "#1565C0"
+
+  web: false
+  windows: false
+  macos: false
