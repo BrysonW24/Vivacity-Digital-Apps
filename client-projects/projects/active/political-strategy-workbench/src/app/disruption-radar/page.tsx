@@ -31,10 +31,18 @@ export default function DisruptionRadar() {
     setResult(null)
 
     try {
+      // Use fetch for Next.js API routes instead of apiClient (which points to backend)
       const response = await fetch('/api/disruption-radar', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
+
+      if (!response.ok) {
+        throw new Error('Failed to generate disruption analysis')
+      }
+
       const data = await response.json()
 
       setTimeout(() => {
@@ -70,7 +78,7 @@ export default function DisruptionRadar() {
       <div className="mb-10">
         <h2 className="section-header">Disruption Radar</h2>
         <p className="text-commbank-gray-600 text-lg">
-          Scan AI and platform shifts to identify threats to CommBank revenue pools
+          Scan emerging issues to identify threats to policy objectives and public support
         </p>
       </div>
 
@@ -84,16 +92,16 @@ export default function DisruptionRadar() {
               Disruption Radar
             </h3>
             <p className="text-commbank-gray-600 mt-1">
-              Detect agentic systems threatening core profit pools
+              Detect emerging issues threatening policy objectives and public support
             </p>
           </div>
         </div>
 
         <div className="bg-gradient-to-r from-red-50 to-orange-50 p-6 rounded-xl mb-6 border-l-4 border-red-500">
           <p className="text-commbank-gray-700 leading-relaxed">
-            We ingest the newest CommBank AI intelligence issues, tag each signal against the top FY25 product
-            lines, and highlight the defend/offend moves that keep the bank in front. Use this to brief product
-            owners, pricing committees, and channel teams on looming disruption.
+            We ingest the newest political and media intelligence, tag each signal against key policy
+            priorities, and highlight defensive and offensive strategic communications moves. Use this to brief
+            ministers, media advisors, and cabinet on looming political risks.
           </p>
         </div>
 
@@ -138,7 +146,7 @@ export default function DisruptionRadar() {
 
           <div className="bg-gradient-to-r from-red-600 to-rose-600 text-white p-6 rounded-xl">
             <h4 className="text-xl font-bold mb-2">DISRUPTION RADAR</h4>
-            <p className="text-red-100">FY25 Revenue Protection Signals</p>
+            <p className="text-red-100">Political Risk & Policy Threat Signals</p>
           </div>
 
           <div className="space-y-6">
@@ -212,15 +220,15 @@ export default function DisruptionRadar() {
             <ul className="space-y-3 text-commbank-gray-700">
               <li className="flex gap-2 items-start">
                 <span className="text-red-600 font-bold mt-1">•</span>
-                <span>Every risk call includes verbatim evidence and identifies the impacted revenue line</span>
+                <span>Every risk call includes verbatim evidence and identifies the impacted policy area</span>
               </li>
               <li className="flex gap-2 items-start">
                 <span className="text-red-600 font-bold mt-1">•</span>
-                <span>Severity reflects potential FY25 income impact horizon flags how fast to mobilise</span>
+                <span>Severity reflects potential political impact and timeline indicates how fast to respond</span>
               </li>
               <li className="flex gap-2 items-start">
                 <span className="text-red-600 font-bold mt-1">•</span>
-                <span>Defend/offend moves are written so product owners can brief teams immediately</span>
+                <span>Defend/offend moves are written so media advisors can brief ministers immediately</span>
               </li>
             </ul>
           </div>
@@ -231,12 +239,12 @@ export default function DisruptionRadar() {
                 <span className="text-xl">⚡</span>
               </div>
               <h3 className="text-lg font-bold text-commbank-gray-900">
-                Agent-Era Vigilance
+                Political Vigilance
               </h3>
             </div>
             <p className="text-commbank-gray-700 leading-relaxed">
-              Validate proposed mitigations with product risk and legal before deployment.
-              Feed additional market intel back into the radar backlog and maintain continuous monitoring.
+              Validate proposed responses with policy advisors and legal before public statements.
+              Feed additional media intelligence back into the radar backlog and maintain continuous monitoring.
             </p>
           </div>
         </div>

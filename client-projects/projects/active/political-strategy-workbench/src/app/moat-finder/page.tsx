@@ -31,10 +31,18 @@ export default function MoatFinder() {
     setResult(null)
 
     try {
+      // Use fetch for Next.js API routes instead of apiClient (which points to backend)
       const response = await fetch('/api/moat-finder', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
+
+      if (!response.ok) {
+        throw new Error('Failed to generate moat analysis')
+      }
+
       const data = await response.json()
 
       setTimeout(() => {
@@ -61,7 +69,7 @@ export default function MoatFinder() {
       <div className="mb-10">
         <h2 className="section-header">Strategic Moat Finder</h2>
         <p className="text-commbank-gray-600 text-lg">
-          Latest market signals translated into CommBank-specific moat intelligence
+          Latest media signals translated into defensible policy positions
         </p>
       </div>
 
@@ -75,16 +83,16 @@ export default function MoatFinder() {
               Strategic Moat Finder
             </h3>
             <p className="text-commbank-gray-600 mt-1">
-              Pull the latest AI and fintech news curated for CommBank
+              Pull the latest news and analyse for strategic political opportunities
             </p>
           </div>
         </div>
 
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl mb-6 border-l-4 border-blue-500">
           <p className="text-commbank-gray-700 leading-relaxed">
-            This sweep ingests the latest items from our CommBank AI intelligence feed and reframes each
-            signal as a defendable advantage for the group. Use it to brief risk product or investment
-            committees on where to double down.
+            This sweep ingests the latest items from the news intelligence feed and reframes each
+            signal as a defendable policy position. Use it to brief ministers, communications teams,
+            or cabinet on strategic messaging opportunities.
           </p>
         </div>
 
@@ -128,8 +136,8 @@ export default function MoatFinder() {
           </div>
 
           <div className="bg-gradient-to-r from-green-600 to-emerald-600 text-white p-6 rounded-xl">
-            <h4 className="text-xl font-bold mb-2">MOAT INTELLIGENCE</h4>
-            <p className="text-green-100">CEO Moat Plays</p>
+            <h4 className="text-xl font-bold mb-2">POSITION INTELLIGENCE</h4>
+            <p className="text-green-100">Strategic Policy Positions</p>
           </div>
 
           <div className="space-y-6">
@@ -204,15 +212,15 @@ export default function MoatFinder() {
             <ul className="space-y-3 text-commbank-gray-700">
               <li className="flex gap-2 items-start">
                 <span className="text-purple-600 font-bold mt-1">•</span>
-                <span>Every moat insight links to verbatim evidence captured from the source articles</span>
+                <span>Every position insight links to verbatim evidence captured from news sources</span>
               </li>
               <li className="flex gap-2 items-start">
                 <span className="text-purple-600 font-bold mt-1">•</span>
-                <span>Signals emphasise levers that lean on CommBank scale data depth or partner network</span>
+                <span>Signals emphasise political advantages, public sentiment, and media positioning opportunities</span>
               </li>
               <li className="flex gap-2 items-start">
                 <span className="text-purple-600 font-bold mt-1">•</span>
-                <span>Outputs are markdown-ready for strategy sessions risk forums or investor briefings</span>
+                <span>Outputs are markdown-ready for ministerial briefings, press releases, or cabinet submissions</span>
               </li>
             </ul>
           </div>
@@ -223,12 +231,12 @@ export default function MoatFinder() {
                 <span className="text-xl">📡</span>
               </div>
               <h3 className="text-lg font-bold text-commbank-gray-900">
-                Market Intelligence Scope
+                Media Intelligence Scope
               </h3>
             </div>
             <p className="text-commbank-gray-700 leading-relaxed">
-              Feeds are pre-screened for relevancy. Validate commercial assumptions with owners
-              before execution and capture any additional news inside the citations vault.
+              Feeds are pre-screened for political relevancy. Validate policy assumptions with stakeholders
+              before public communications and capture any additional news inside the citations vault.
             </p>
           </div>
         </div>

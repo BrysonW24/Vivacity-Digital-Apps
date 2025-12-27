@@ -6,70 +6,81 @@ export async function POST(request: NextRequest) {
     await new Promise(resolve => setTimeout(resolve, 1000))
 
     const disruptionIntelligence = {
-      signals: [
+      disruptions: [
         {
-          title: 'Agentic AI Platforms Automating Financial Advisory',
+          title: 'AI-Generated Misinformation Threatening Policy Credibility',
+          mechanism: 'Generative AI tools enable mass production of convincing fake ministerial statements, policy announcements, and government documents. These AI-generated materials spread rapidly through social media before official corrections can reach the same audiences.',
+          pool: 'Public trust and policy implementation success across all portfolios',
+          revenue: 'Recent polling shows 42% of Australians have encountered AI-generated misinformation about government policies, creating resistance to legitimate policy communications and reducing effectiveness of public health, economic, and social program messaging.',
           severity: 'High' as const,
-          horizon: 'Near-term (6-12 months)',
-          impactedRevenue: 'Wealth management advisory fees represent approximately $200M in FY25 revenue. AI-powered robo-advisors and autonomous financial planning tools threaten to commoditize human advisory services, particularly in the mass-affluent segment where margins are already compressed.',
-          defendOffendMove: 'DEFEND: Launch AI co-pilot tools for financial advisors that augment human expertise with real-time portfolio analytics, tax optimization suggestions, and personalized client insights. OFFEND: Build fully autonomous robo-advisor platform for mass market segment (sub-$250k portfolios) to capture price-sensitive customers and create defensive moat.',
-          evidence: 'Multiple AI financial planning startups raised over $500M in combined funding during Q4 2024. Platform demos show autonomous tax-loss harvesting, rebalancing, and goal-based planning with minimal human oversight.',
-          evidenceSource: 'Fintech Funding Report Q4 2024, CB Insights'
+          velocity: 'Fast (0-12 months)' as const,
+          posture: 'Defend' as const,
+          response: 'Launch official government AI content verification service with clear labelling of authentic communications. Train ministerial media teams on AI misinformation detection and rapid response protocols. Establish proactive digital engagement strategy using verified social media channels and partnership with fact-checking organisations to preempt false narratives.',
+          owner: 'Minister for Communications + Department of Prime Minister & Cabinet',
+          evidence: 'Multiple AI-generated fake ministerial statements and fabricated policy announcements circulated on social media during Q4 2024. Analysis shows misinformation reaches 10x more citizens than official corrections, creating persistent policy credibility gaps.',
+          evidenceSource: 'Australian Strategic Policy Institute Misinformation Report 2024'
         },
         {
-          title: 'Embedded Finance Reducing Payment Interchange Revenue',
+          title: 'Private Sector Digital Services Reducing Government Relevance',
+          mechanism: 'Private sector digital platforms (banking apps, healthcare booking, education portals) now handle citizen interactions that previously required government touchpoints, reducing direct government-citizen relationships and visibility.',
+          pool: 'Citizen engagement with government services and policy acceptance',
+          revenue: 'Private sector digital platforms now handle 65% of citizen interactions that previously required government touchpoints (banking, healthcare booking, education enrolment). This reduces government visibility and weakens direct relationship with citizens, impacting policy communication effectiveness.',
           severity: 'High' as const,
-          horizon: 'Immediate (0-6 months)',
-          impactedRevenue: 'Card interchange fees generate approximately $150M annually. Major e-commerce platforms and point-of-sale providers are embedding payment capabilities directly into checkout flows, bypassing traditional card networks and capturing interchange revenue that previously flowed to issuing banks.',
-          defendOffendMove: 'DEFEND: Strengthen merchant relationships by offering value-added analytics, fraud protection, and working capital solutions that justify premium interchange rates. OFFEND: Launch white-label Banking-as-a-Service APIs targeting major retailers and platforms, enabling CommBank to power embedded finance offerings and retain revenue share.',
-          evidence: 'Shopify, Stripe, and Square all announced expanded banking-as-a-service offerings in late 2024. Market analysis shows embedded finance payment volume growing 35% year-over-year, with traditional card issuers losing 8-12% of interchange revenue to platform-native solutions.',
-          evidenceSource: 'Payments Industry Report 2024, McKinsey & Company'
+          velocity: 'Medium (1-3 years)' as const,
+          posture: 'Offend' as const,
+          response: 'Accelerate myGov digital service improvements to match private sector user experience. Establish partnerships with major platforms for seamless government service integration. Launch next-generation digital identity and service platform that becomes essential infrastructure for private sector service delivery, ensuring government remains central to citizen digital interactions.',
+          owner: 'Minister for Government Services + Digital Transformation Agency',
+          evidence: 'Survey data shows 78% of Australians prefer private sector digital services over government portals for equivalent tasks. Digital service usage patterns indicate citizens increasingly view government as "backup option" rather than primary service provider.',
+          evidenceSource: 'Digital Service Delivery Trends Report, Deloitte Australia 2024'
         },
         {
-          title: 'AI-Powered Credit Scoring Enabling Non-Bank Lenders',
+          title: 'Decentralised Social Media Fragmenting Policy Communications',
+          mechanism: 'Migration of politically engaged citizens to decentralised social media platforms (Threads, Bluesky, Mastodon) beyond traditional channels creates messaging fragmentation and reduces reach of government communications.',
+          pool: 'Effectiveness of ministerial communications and policy announcements',
+          revenue: 'Migration of 30% of politically engaged Australians to decentralised social media platforms creates messaging fragmentation. Traditional government communication strategies failing to reach emerging digital communities, particularly youth and politically active demographics.',
           severity: 'Medium' as const,
-          horizon: 'Near-term (6-12 months)',
-          impactedRevenue: 'Personal lending portfolio margins face pressure on approximately $80M in annual revenue. Alternative lenders using AI-based underwriting can approve borrowers faster and price more competitively by analyzing non-traditional data sources (cash flow, rent payments, employment history) that traditional credit bureaus miss.',
-          defendOffendMove: 'DEFEND: Deploy superior AI credit models leveraging CommBank\'s unique advantage in longitudinal transaction data, spending patterns, and income stability signals. OFFEND: Partner with fintech lenders to extend CommBank\'s lending reach into underserved segments while maintaining risk-adjusted returns through data licensing agreements.',
-          evidence: 'Alternative lenders using AI-based approval processes grew market share by 40% year-over-year. Default rates remain comparable to traditional lenders (3-5%) while approval speeds decreased from days to minutes.',
-          evidenceSource: 'Alternative Lending Market Analysis 2024, Deloitte'
+          velocity: 'Medium (1-3 years)' as const,
+          posture: 'Monitor' as const,
+          response: 'Expand official government presence to emerging platforms including Threads, Bluesky, and Mastodon. Train communication teams on platform-specific engagement strategies and community management. Develop direct government communication channels (apps, newsletters, SMS) that bypass social media intermediaries and create unmediated policy communication with citizens.',
+          owner: 'Minister for Communications + Government Communication Service',
+          evidence: 'Platform migration data shows 30% decline in reach for official government social media posts year-over-year. Emerging platforms account for 40% of political discussion among 18-35 age group but less than 5% of government communication resources.',
+          evidenceSource: 'Social Media Landscape Analysis, Roy Morgan Research 2024'
         },
         {
-          title: 'Blockchain Settlement Systems Reducing Clearing Fees',
-          severity: 'Low' as const,
-          horizon: 'Long-term (18-24 months)',
-          impactedRevenue: 'Institutional clearing and settlement services generate approximately $25M in annual revenue, facing long-term disruption as central banks and institutional networks pilot blockchain-based real-time settlement systems that eliminate traditional clearing intermediaries.',
-          defendOffendMove: 'DEFEND: Invest in blockchain R&D and participate in industry consortiums to maintain technical leadership and influence standards development. OFFEND: Pilot tokenized deposit products for institutional clients, enabling programmable money and smart-contract-based settlement that creates new revenue opportunities.',
-          evidence: 'Central banks globally are testing wholesale CBDC settlement systems. Australian RBA announced Project Acacia pilot for tokenized wholesale settlement in Q1 2025. Industry estimates suggest 15-20% of institutional settlement could migrate to blockchain rails by 2027.',
-          evidenceSource: 'Central Bank Digital Currency Report 2024, Bank for International Settlements'
+          title: 'State Government Policy Innovation Creating Federal Expectations',
+          mechanism: 'Leading state governments (Victoria, NSW, Queensland) launching innovative digital services, environmental policies, and social programs ahead of federal action, creating perception gap and citizen expectations that federal government cannot currently meet.',
+          pool: 'Federal policy leadership and political mandate',
+          revenue: 'Leading state governments launching innovative digital services, environmental policies, and social programs ahead of federal action. This creates citizen expectations for federal government to match state innovation, whilst federal constraints (budget, bureaucracy) create perception of federal government as slower and less responsive.',
+          severity: 'Medium' as const,
+          velocity: 'Slow (3+ years)' as const,
+          posture: 'Offend' as const,
+          response: 'Establish formal federal-state policy coordination framework that enables federal government to claim shared credit for successful state initiatives. Accelerate federal policy adoption of proven state innovations. Launch flagship federal digital and policy innovation programs that set standards for states to follow, reasserting federal leadership on major policy challenges.',
+          owner: 'Department of Prime Minister & Cabinet + Federal Financial Relations',
+          evidence: 'Public perception polling shows states of Victoria, NSW, and Queensland rated higher than federal government on "policy innovation" and "digital service delivery" across 8 of 10 measured categories. Media coverage of state policy innovations outpaces federal coverage 3:1.',
+          evidenceSource: 'Federal-State Policy Leadership Study, University of Melbourne 2024'
         }
       ],
-      executiveSummary: 'Four material disruption signals threaten $455M in combined FY25 revenue across wealth management, payments, lending, and institutional banking. Immediate-to-near-term threats (agentic AI advisory, embedded finance, AI credit scoring) require decisive defend/offend moves within 6-12 months. Priority actions focus on deploying superior AI capabilities leveraging CommBank\'s data moat, launching white-label BaaS offerings to retain payment revenue, and strengthening merchant and advisor relationships through value-added services. Long-term blockchain settlement risk warrants strategic R&D investment but does not require immediate capital allocation. All recommendations align with responsible AI principles and regulatory compliance frameworks.',
+      additionalNotes: 'Four significant disruption signals threaten government policy effectiveness and citizen engagement. Immediate threats (AI misinformation, private sector digital displacement) require rapid defensive and offensive strategic responses within 6-12 months. Priority actions focus on enhancing digital service delivery to match private sector expectations, establishing AI content verification infrastructure to combat misinformation, and expanding communication channels beyond traditional social media platforms. Long-term state government innovation pressure warrants strategic federal policy acceleration programs. All recommendations align with democratic accountability principles and privacy legislation.',
       citations: [
         {
-          source: 'Fintech Funding Report Q4 2024, CB Insights',
-          quote: 'AI-powered financial planning platforms collectively raised $520M in venture funding during Q4 2024, with lead investors citing autonomous portfolio management and tax optimization as key value drivers disrupting traditional advisory models.',
-          relevance: 'Validates the scale and urgency of the agentic AI advisory threat to wealth management revenue.'
+          source: 'Australian Strategic Policy Institute Misinformation Report 2024',
+          quote: 'AI-generated misinformation about government policies reached 42% of Australians during 2024, with false content achieving 10x greater reach than official government corrections on social media platforms.',
+          relevance: 'Validates the scale and urgency of the AI misinformation threat to policy credibility and government communications.'
         },
         {
-          source: 'Payments Industry Report 2024, McKinsey & Company',
-          quote: 'Embedded finance payment volumes grew 35% year-over-year, with platform-native solutions capturing 8-12% of interchange revenue previously flowing to traditional card-issuing banks.',
-          relevance: 'Quantifies the immediate revenue threat from embedded finance to card interchange business.'
+          source: 'Digital Service Delivery Trends Report, Deloitte Australia 2024',
+          quote: 'Survey data indicates 78% of Australians prefer private sector digital service interfaces over government portals for equivalent transactions, with government services increasingly viewed as backup options rather than primary channels.',
+          relevance: 'Demonstrates the competitive threat to government citizen engagement from private sector digital service delivery.'
         },
         {
-          source: 'Alternative Lending Market Analysis 2024, Deloitte',
-          quote: 'Alternative lenders leveraging AI-based credit decisioning grew market share by 40% annually while maintaining comparable default rates (3-5%) to traditional lenders, with approval times decreasing from days to minutes.',
-          relevance: 'Demonstrates competitive threat to personal lending margins from AI-powered non-bank lenders.'
+          source: 'Social Media Landscape Analysis, Roy Morgan Research 2024',
+          quote: 'Government social media reach declined 30% year-over-year as citizens migrated to decentralized platforms, with emerging platforms accounting for 40% of political discussion among 18-35 demographics but less than 5% of government communication investment.',
+          relevance: 'Quantifies the communication fragmentation challenge and validates need for multi-platform strategy.'
         },
         {
-          source: 'Central Bank Digital Currency Report 2024, Bank for International Settlements',
-          quote: 'Wholesale CBDC pilots across major economies suggest 15-20% of institutional settlement volume could migrate to blockchain-based rails by 2027, reducing reliance on traditional clearing intermediaries.',
-          relevance: 'Establishes long-term timeline and revenue impact for blockchain settlement disruption.'
-        },
-        {
-          source: 'Australian Reserve Bank Project Acacia Announcement',
-          quote: 'The RBA announced Project Acacia pilot program for tokenized wholesale settlement in Q1 2025, partnering with major Australian financial institutions to test programmable CBDC infrastructure.',
-          relevance: 'Confirms Australia-specific blockchain settlement timeline and validates strategic importance of early participation.'
+          source: 'Federal-State Policy Leadership Study, University of Melbourne 2024',
+          quote: 'Public perception research shows state governments of Victoria, NSW, and Queensland rated higher than federal government on policy innovation and digital service delivery across 8 of 10 measured categories, with state policy media coverage exceeding federal coverage 3:1.',
+          relevance: 'Establishes the political credibility risk from state government policy innovation outpacing federal initiatives.'
         }
       ]
     }

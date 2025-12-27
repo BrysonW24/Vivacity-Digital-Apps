@@ -37,13 +37,16 @@ export class ABCNewsProvider implements INewsProvider {
       const items: NewsItem[] = []
 
       for (const item of feed.items.slice(0, limit)) {
+        const title = item.title || ''
+        const content = this.extractContent(item)
+
         const newsItem: NewsItem = {
-          title: item.title || '',
-          content: this.extractContent(item),
+          title,
+          content,
           source: 'ABC News',
           sourceUrl: item.link || '',
           publishedAt: item.pubDate ? new Date(item.pubDate) : new Date(),
-          category: category.toUpperCase(),
+          category: this.categorizeContent(title, content, category),
           author: item.creator || 'ABC News',
           imageUrl: this.extractImageUrl(item),
         }
@@ -84,5 +87,52 @@ export class ABCNewsProvider implements INewsProvider {
       return item.enclosure.url
     }
     return undefined
+  }
+
+  private categorizeContent(title: string, content: string, requestedCategory: string): string {
+    const text = (title + ' ' + content).toLowerCase()
+
+    // Sports keywords
+    const sportsKeywords = ['cricket', 'test', 'ashes', 'wicket', 'batting', 'bowling', 'innings', 'mcg',
+      'football', 'soccer', 'rugby', 'tennis', 'atp', 'australian open', 'sport', 'match', 'game',
+      'team', 'player', 'coach', 'sydney to hobart', 'yacht', 'race', 'championship']
+
+    // Politics keywords
+    const politicsKeywords = ['government', 'parliament', 'minister', 'prime minister', 'election',
+      'policy', 'legislation', 'labor', 'liberal', 'coalition', 'senate', 'mp', 'politician',
+      'vote', 'political', 'politics']
+
+    // Business keywords
+    const businessKeywords = ['economy', 'market', 'business', 'company', 'stock', 'trade',
+      'investment', 'financial', 'revenue', 'profit', 'bank', 'corporate', 'industry']
+
+    // Technology keywords
+    const technologyKeywords = ['technology', 'tech', 'ai', 'artificial intelligence', 'software',
+      'digital', 'cyber', 'computer', 'internet', 'app', 'platform']
+
+    // Check for sports content first (to avoid miscategorization)
+    if (sportsKeywords.some(keyword => text.includes(keyword))) {
+      return 'OTHER'
+    }
+
+    // Check for politics
+    if (politicsKeywords.some(keyword => text.includes(keyword))) {
+      return 'POLITICS'
+    }
+
+    // Check for business
+    if (businessKeywords.some(keyword => text.includes(keyword))) {
+      return 'BUSINESS'
+    }
+
+    // Check for technology
+    if (technologyKeywords.some(keyword => text.includes(keyword))) {
+      return 'TECHNOLOGY'
+    }
+
+    // If we can't categorize based on content, use the requested category if it makes sense
+    // Otherwise default to OTHER
+    const validCategories = ['BUSINESS', 'TECHNOLOGY', 'POLITICS']
+    return validCategories.includes(requestedCategory.toUpperCase()) ? requestedCategory.toUpperCase() : 'OTHER'
   }
 }
