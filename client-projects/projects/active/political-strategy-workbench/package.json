@@ -31,9 +31,17 @@
     "ci": "npm run full:install && npm run lint && npm run typecheck && npm run full:test && npm run full:build"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.71.2",
+    "@google/generative-ai": "^0.24.1",
+    "axios": "^1.13.2",
+    "cheerio": "^1.1.0",
     "next": "^14.2.18",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "rss-parser": "^3.13.0",
+    "youtube-caption-extractor": "^1.9.1",
+    "youtube-transcript": "^1.2.1",
+    "zustand": "^5.0.9"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
