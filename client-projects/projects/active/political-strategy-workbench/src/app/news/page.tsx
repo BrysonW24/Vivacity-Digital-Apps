@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import apiClient from '@/lib/apiClient'
 
 interface NewsArticle {
   id: string
@@ -19,20 +21,52 @@ export default function NewsPage() {
   const [error, setError] = useState<string | null>(null)
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [selectedSource, setSelectedSource] = useState<string>('all')
+  const [searchQuery, setSearchQuery] = useState<string>('')
 
   useEffect(() => {
     fetchArticles()
-  }, [])
+  }, [selectedCategory])
 
   const fetchArticles = async () => {
     try {
       setLoading(true)
-      const response = await fetch('http://localhost:3001/api/news-articles?limit=50&page=1')
+      const category = selectedCategory === 'all' ? 'politics' : selectedCategory
+      const response = await fetch(`/api/news?category=${category}&limit=50`)
       const data = await response.json()
-      setArticles(data.data || [])
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to fetch news')
+      }
+
+      // Transform to match expected interface
+      const transformedArticles = (data.news || []).map((article: any) => {
+        // Map categories to display format
+        const categoryMap: Record<string, string> = {
+          'politics': 'politics',
+          'federal-politics': 'politics',
+          'business': 'business',
+          'technology': 'technology',
+          'environment': 'environment',
+          'regulation': 'politics',
+          'latest': 'other',
+        }
+
+        return {
+          id: article.id.toString(),
+          title: article.title,
+          content: article.summary,
+          source: article.source,
+          sourceUrl: article.url,
+          publishedAt: article.publishedAt,
+          category: categoryMap[article.category.toLowerCase()] || 'OTHER',
+          sentiment: article.sentiment,
+        }
+      })
+
+      setArticles(transformedArticles)
       setError(null)
     } catch (err) {
-      setError('Failed to fetch news articles. Make sure the backend server is running.')
+      setError('Failed to fetch news articles.')
       console.error('Error fetching articles:', err)
     } finally {
       setLoading(false)
@@ -40,22 +74,22 @@ export default function NewsPage() {
   }
 
   const triggerNewsFetch = async () => {
-    try {
-      setLoading(true)
-      await fetch('http://localhost:3001/api/news-aggregation/fetch?category=politics&limit=10')
-      await fetchArticles()
-    } catch (err) {
-      setError('Failed to fetch new articles')
-      console.error('Error:', err)
-    } finally {
-      setLoading(false)
-    }
+    // Simply refetch articles - the API always returns fresh data
+    await fetchArticles()
   }
 
   const filteredArticles = articles.filter(article => {
     const categoryMatch = selectedCategory === 'all' || article.category === selectedCategory
     const sourceMatch = selectedSource === 'all' || article.source === selectedSource
-    return categoryMatch && sourceMatch
+
+    // Search filter - search across title, content, and source
+    const searchLower = searchQuery.toLowerCase()
+    const searchMatch = searchQuery === '' ||
+      (article.title || '').toLowerCase().includes(searchLower) ||
+      (article.content || '').toLowerCase().includes(searchLower) ||
+      (article.source || '').toLowerCase().includes(searchLower)
+
+    return categoryMatch && sourceMatch && searchMatch
   })
 
   const categories = ['all', ...Array.from(new Set(articles.map(a => a.category)))]
@@ -84,15 +118,15 @@ export default function NewsPage() {
 
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
-      POLITICS: 'bg-blue-100 text-blue-800',
-      BUSINESS: 'bg-purple-100 text-purple-800',
-      TECHNOLOGY: 'bg-indigo-100 text-indigo-800',
-      ENVIRONMENT: 'bg-green-100 text-green-800',
-      SOCIAL: 'bg-pink-100 text-pink-800',
-      INTERNATIONAL: 'bg-orange-100 text-orange-800',
-      OTHER: 'bg-gray-100 text-gray-800',
+      politics: 'bg-blue-100 text-blue-800',
+      business: 'bg-purple-100 text-purple-800',
+      technology: 'bg-indigo-100 text-indigo-800',
+      environment: 'bg-green-100 text-green-800',
+      social: 'bg-pink-100 text-pink-800',
+      international: 'bg-orange-100 text-orange-800',
+      other: 'bg-gray-100 text-gray-800',
     }
-    return colors[category] || colors.OTHER
+    return colors[category] || colors.other
   }
 
   if (loading && articles.length === 0) {
@@ -144,20 +178,59 @@ export default function NewsPage() {
                 Latest news from ABC News, The Guardian Australia, and News.com.au
               </p>
             </div>
-            <button
-              onClick={triggerNewsFetch}
-              disabled={loading}
-              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <svg className={`w-5 h-5 mr-2 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              Refresh News
-            </button>
+            <div className="flex gap-2">
+              <Link
+                href="/news/search"
+                className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                Advanced Search
+              </Link>
+              <button
+                onClick={triggerNewsFetch}
+                disabled={loading}
+                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <svg className={`w-5 h-5 mr-2 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Refresh News
+              </button>
+            </div>
+          </div>
+
+          {/* Search Bar */}
+          <div className="mt-6">
+            <div className="relative max-w-2xl">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <input
+                type="text"
+                placeholder="Search articles by keyword, title, or source..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="block w-full pl-10 pr-3 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                >
+                  <svg className="h-5 w-5 text-gray-400 hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Filters */}
-          <div className="mt-6 flex flex-wrap gap-4">
+          <div className="mt-4 flex flex-wrap gap-4">
             <div>
               <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
                 Category
@@ -197,6 +270,7 @@ export default function NewsPage() {
             <div className="flex items-end">
               <div className="text-sm text-gray-600">
                 Showing <span className="font-semibold text-gray-900">{filteredArticles.length}</span> articles
+                {searchQuery && <span className="ml-1 text-gray-500">for "{searchQuery}"</span>}
               </div>
             </div>
           </div>
